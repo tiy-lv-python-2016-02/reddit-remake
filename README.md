@@ -1,70 +1,60 @@
-# Reddit Remake
-
 ## Description
 
-Welcome to [Reddit](http://www.reddit.com).  Reddit is a huge forum/social media platform which allows 
-users to post whatever they would like and share it with the world.  There are 
-millions of people online all the time looking and posting.  Reddit is also 
-interesting in that it allows users to up-vote and down-vote basically 
-everything on the site.  These votes turn into something called karma which 
-people will do most anything for.  All of the posts belong to a subreddit 
-which is simply a themed area containing posts.  You are going to create the 
-model backend for this system.
+Create an interface in Django to the [MovieLens dataset](http://grouplens.org/datasets/movielens/).
 
 ## Normal Mode
 
-You will need to create and test the following models. How much information 
-you add is up to you but minimum requirements are listed. 
+### Models
+You will need to create the following models for the dataset:
 
-Subreddit:
-* id
-* Name
-* Description
-* creation date time
-* method called `current_count` that returns how many posts
-* method called `today_count` that returns posts in the last 24 hours
-* method called `daily_average` that gets the average count of posts over the last 7 days
-
-Post:
+Movie:
 * id
 * title
-* description: needs to be longer than 255 characters
-* url: which can be null and should use the built in urlfield type
-* slug: This is a url friendly version of the title. [SlugField](https://docs.djangoproject.com/en/1.8/ref/models/fields/#slugfield)
-* creation time
-* modification time
-* Relationship to subreddit
-* Relationship to a User
-* method called `is_recent` that returns True/False depending on if the post is in the last day
-* method called `is_hot` that returns True/False if the post has gotten more than 3 comments in the past 3 hours
+* genre
 
-Comment:
+Rater:
 * id
-* comment text: needs to be longer than 255 characters
-* relationship to User
-* relationship to Post
-* created time
-* modified time
+* gender
+* age
+* occupation
+* zip_code
 
+Rating:
+* id
+* rater (to Rater)
+* movie (to Movie)
+* rating
+* timestamp
+
+### Views
+
+* The top 20 movies rated. This list of movies should have their average rating,
+  and each movie listed should have a link to its individual page.
+
+* Each individual movie. This page should have the movie, its average rating,
+  and each person who rated it. The list of people should have the rating
+  with each person and should have a link to that person's page.
+
+* Each individual user. This page should have their demographic data, and a
+  list of all movies they've rated, with the rating they gave it. Each movie
+  listed should have the rating they gave it beside it and should have a link
+  to that movie's page.
 
 ## Hard Mode
-* Implement the voting system.  Both comments and posts can be voted up and down it is your choice how this is implemented in the system.  One note is that you probably want to store the up and down votes individually with timestamps
 
-* Comments and Posts should have methods that allow for them to calculate the total value of up-votes - down-votes.
+### Migrate the system over to your local postgres database.  
 
-* Implement karma.  Reddit has 2 karma indicators link karma and comment karma.  For this project both karma are calculated as the sum of each item’s total (from previous objective).
+This will be similar
+ to what needs to happen with a new production database.  You can find the information on this
+[here](https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-DATABASES).  The second code example shows
+the configuration for postgres.  You will need to create the database like last week
+then run migrations on it. 
 
-* Implement the ManyToMany Relationship with Trophies
+### Import data
+Take [the script to turn MovieLens 1M data into fixtures](https://github.com/tiy-lv-python-2016-02/django-movies-part-2/blob/master/convert_ml_1m_data.py)
+and modify it to turn your CSV data into fixtures, then load those fixtures
+with `python manage.py loaddata <fixture_file>`.
 
-* Posts can be sorted in a few ways in reddit.  Implement the following as described.  You will need to do these in the django shell and add a python file with the code as part of your project.
-     * New: Chronologically newest to oldest
-     * Top: Highest rated for the last 24 hours
-     * Hot: Ordered by amount of up-votes in the 3 hours
-     * Controversial: Ordered by posts with a high number of both up and down votes
-
-* The User object is part of the core auth library.  There are a few ways to extend its functionality.  Historically, the way it works is that you create a profile object with a OneToOne relationship to User.  Implement this object then create methods on it to retrieve:
-* Link karma for the user
-* Comment karma for the user
-* Average up-votes
-* Average down-votes
-* Total counts for comments and links
+## External Links
+* [Django URLs](https://docs.djangoproject.com/en/1.8/topics/http/urls/)
+* [Django Views](https://docs.djangoproject.com/en/1.9/topics/http/views/)
